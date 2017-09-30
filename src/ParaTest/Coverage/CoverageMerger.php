@@ -33,6 +33,19 @@ class CoverageMerger
     private function getCoverageObject(\SplFileObject $coverageFile)
     {
         if ('<?php' === $coverageFile->fread(5)) {
+            // ugly hack here. Just enough to make it work
+
+            $data = file_get_contents($coverageFile->getRealPath());
+            $lines = explode("\n", $data);
+            $data = join("\n", array_slice($lines, 2));
+
+            file_put_contents($coverageFile->getRealPath(), '<?php
+            $coverage = new SebastianBergmann\CodeCoverage\CodeCoverage(
+                (new ReflectionClass(\SebastianBergmann\CodeCoverage\Driver\PHPDBG::class))
+                    ->newInstanceWithoutConstructor()
+            );
+            ' . $data);
+
             return include $coverageFile->getRealPath();
         }
 

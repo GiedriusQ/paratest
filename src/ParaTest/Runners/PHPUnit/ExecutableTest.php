@@ -108,11 +108,9 @@ abstract class ExecutableTest
             return false;
         }
 
-        // PHPUnit has a bug where by it doesn't include warnings in the junit
-        // output, but still fails. This is a hacky, imperfect method for extracting them
-        // see https://github.com/sebastianbergmann/phpunit/issues/1317
+        // show method which thrown warning name
         preg_match_all(
-            '/^\d+\) Warning\n(.+?)$/ms',
+            '/^There was (?:\d+?) warnings?:\n(?:.*?)\n\d+?\)\s?(.*?)$/ms',
             $this->process->getOutput(),
             $matches
         );
@@ -296,7 +294,12 @@ abstract class ExecutableTest
     protected function getCommandString($binary, $options = array())
     {
         $builder = new ProcessBuilder();
-        $builder->setPrefix($binary);
+        $builder->setPrefix('phpdbg');
+        $builder->add('-qrr');
+        $builder->add($binary);
+        $builder->add('-d');
+        // phpdbg is extremely memory hungry
+        $builder->add('memory_limit=3G');
         foreach ($options as $key => $value) {
             $builder->add("--$key");
             if ($value !== null) {
