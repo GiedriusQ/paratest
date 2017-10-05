@@ -110,7 +110,7 @@ abstract class ExecutableTest
 
         // show method which thrown warning name
         preg_match_all(
-            '/^There was (?:\d+?) warnings?:\n(?:.*?)\n\d+?\)\s?(.*?)$/ms',
+           '/^There w(?:as|ere) (?:\d+?) warnings?:\n(?:.*?)\n\d+?\)\s?(.*?)$/ms',
             $this->process->getOutput(),
             $matches
         );
